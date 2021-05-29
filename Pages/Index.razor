@@ -23,6 +23,7 @@
     public string Event { get; set; }
     private int _timerInterval = 100;
     private static Timer _tableRefreshTimer;
+    public bool ended;
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,10 +32,17 @@
 
     private async Task OnScroll(EventArgs e)
     {
-        ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
-        Delta = ScrollTop - Temp;
-                Event = "OnScroll";
-
+        if(ended)
+        {
+            Delta = 0;
+            Event = "OnTouchEnd";
+        }
+        else
+        {
+            ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
+            Delta = ScrollTop - Temp;
+            Event = "OnScroll";
+        }
     }
 
      private void  StartTableRefreshCountdown()
@@ -54,12 +62,14 @@
     {
         Delta = 0;
         Event = "OnTouchEnd";
+        ended = true;
     }
 
     private async Task OnStart(EventArgs e)
     {
         Delta = 0;
         Event = "OnTouchStart";
+        ended = false;
     }
 
     private async Task OnLeave(EventArgs e)
