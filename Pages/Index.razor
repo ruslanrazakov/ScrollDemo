@@ -3,9 +3,9 @@
 @using System.Timers
 @inject IJSRuntime JS;
 
-<h1>DIV scrollTop: @ScrollTop Delta: @Delta</h1> 
+<h1>DIV scrollTop: @ScrollTop Delta: @Delta Event:@Event</h1> 
 
-<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll"  @ontouchleave="@OnEnd" @ontouchend="@OnEnd" @ontouchstart="@OnStart" @ontouchmove="@OnMove">
+<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll" @onmouseup="@OnEnd" @ontouchmove="@OnMove">
       
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
@@ -20,6 +20,7 @@
     public int ScrollTop { get; set; }
     public int Delta { get; set; }
     public int Temp { get; set; }
+    public string Event { get; set; }
 
     private async Task OnScroll(EventArgs e)
     {
@@ -31,15 +32,14 @@
         Temp = ScrollTop;
         await Task.Delay(50);
         Delta = ScrollTop - Temp;
-    }
-
-    private async Task OnStart(EventArgs e)
-    {
-        Delta = 0;
+        await Task.Delay(50);
+        Event = "OnMove";
     }
 
     private async Task OnEnd(EventArgs e)
     {
         Delta = 0;
+        Event = "OnUp";
+
     }
 }
