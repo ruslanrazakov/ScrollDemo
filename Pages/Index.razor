@@ -5,7 +5,7 @@
 
 <h1>DIV scrollTop: @ScrollTop Delta: @Delta Event:@Event</h1> 
 
-<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll" @ontouchleave="@OnLeave" @ontouchstart="@OnStart" @ontouchend="@OnEnd" @ontouchmove="@OnMove">
+<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll"  @ontouchstart="@OnStart" @ontouchend="@OnEnd">
       
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
@@ -21,18 +21,31 @@
     public int Delta { get; set; }
     public int Temp { get; set; }
     public string Event { get; set; }
+    private int _timerInterval = 100;
+    private static Timer _tableRefreshTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        StartTableRefreshCountdown();
+    }
 
     private async Task OnScroll(EventArgs e)
     {
         ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
     }
 
-    private async Task OnMove(EventArgs e)
+     private void  StartTableRefreshCountdown()
+    {
+        _tableRefreshTimer = new Timer(_timerInterval);
+        _tableRefreshTimer.Elapsed += OnTimedEvent;
+        _tableRefreshTimer.AutoReset = true;
+        _tableRefreshTimer.Enabled = true;
+    }
+
+    public void OnTimedEvent(object source, ElapsedEventArgs e )
     {
         Temp = ScrollTop;
-        await Task.Delay(50);
         Delta = ScrollTop - Temp;
-        await Task.Delay(50);
         Event = "OnMove";
     }
 
