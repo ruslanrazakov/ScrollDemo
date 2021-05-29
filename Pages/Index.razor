@@ -32,6 +32,9 @@
     private async Task OnScroll(EventArgs e)
     {
         ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
+        Delta = ScrollTop - Temp;
+                Event = "OnScroll";
+
     }
 
      private void  StartTableRefreshCountdown()
@@ -45,8 +48,6 @@
     public void OnTimedEvent(object source, ElapsedEventArgs e )
     {
         Temp = ScrollTop;
-        Delta = ScrollTop - Temp;
-        Event = "OnMove";
     }
 
     private async Task OnEnd(EventArgs e)
