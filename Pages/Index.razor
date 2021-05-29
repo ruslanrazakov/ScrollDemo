@@ -1,10 +1,11 @@
 ﻿@page "/"
 
+@using System.Timers
 @inject IJSRuntime JS;
 
-<h1>DIV scrollTop: @ScrollTop</h1> 
+<h1>DIV scrollTop: @ScrollTop Delta: @Delta</h1> 
 
-<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll" >
+<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll" @ontouchmove="@OnMove">
       
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
@@ -16,10 +17,19 @@
 </div>
 
 @code {
-   public int ScrollTop { get; set; }
+    public int ScrollTop { get; set; }
+    public int Delta { get; set; }
+    public int Temp { get; set; }
 
-   private async Task OnScroll(EventArgs e)
-   {
-      ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
-   }
+    private async Task OnScroll(EventArgs e)
+    {
+        ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
+    }
+
+    private async Task OnMove(EventArgs e)
+    {
+        Temp = ScrollTop;
+        await Task.Delay(100);
+        Delta = ScrollTop - Temp;
+    }
 }
