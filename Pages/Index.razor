@@ -1,11 +1,11 @@
-﻿@page "/"
+﻿ 25 lines (18 sloc) 3.79 KB
+@page "/"
 
-@using System.Timers
 @inject IJSRuntime JS;
 
-<h1>DIV scrollTop: @ScrollTop Delta: @Delta Event:@Event</h1> 
+<h1>DIV scrollTop: @ScrollTop</h1> 
 
-<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll"  @ontouchstart="@OnStart" @ontouchend="@OnEnd">
+<div id="myDiv" style="overflow:scroll; height:400px;" @onscroll="@OnScroll" >
       
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
@@ -17,64 +17,10 @@
 </div>
 
 @code {
-    public int ScrollTop { get; set; }
-    public int Delta { get; set; }
-    public int Temp { get; set; }
-    public string Event { get; set; }
-    private int _timerInterval = 100;
-    private static Timer _tableRefreshTimer;
-    public bool ended;
+   public int ScrollTop { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        StartTableRefreshCountdown();
-    }
-
-    private async Task OnScroll(EventArgs e)
-    {
-        if(ended)
-        {
-            Delta = 0;
-            Event = "OnTouchEnd";
-        }
-        else
-        {
-            ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
-            Delta = ScrollTop - Temp;
-            Event = "OnScroll";
-        }
-    }
-
-     private void  StartTableRefreshCountdown()
-    {
-        _tableRefreshTimer = new Timer(_timerInterval);
-        _tableRefreshTimer.Elapsed += OnTimedEvent;
-        _tableRefreshTimer.AutoReset = true;
-        _tableRefreshTimer.Enabled = true;
-    }
-
-    public void OnTimedEvent(object source, ElapsedEventArgs e )
-    {
-        Temp = ScrollTop;
-    }
-
-    private async Task OnEnd(EventArgs e)
-    {
-        Delta = 0;
-        Event = "OnTouchEnd";
-        ended = true;
-    }
-
-    private async Task OnStart(EventArgs e)
-    {
-        Delta = 0;
-        Event = "OnTouchStart";
-        ended = false;
-    }
-
-    private async Task OnLeave(EventArgs e)
-    {
-        Delta = 0;
-        Event = "OnTouchLeave";
-    }
+   private async Task OnScroll(EventArgs e)
+   {
+      ScrollTop = await JS.InvokeAsync<int>("getScrollToTop", "#myDiv");
+   }
 }
